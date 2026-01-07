@@ -111,6 +111,25 @@ public class TripService {
     }
 
     @Transactional
+    public TripResponse updateTrip(Long tripId, TripUpdateRequest request) {
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));
+
+        LocalDate startDate = LocalDate.parse(request.getStartDate(), dateFormatter);
+        LocalDate endDate = LocalDate.parse(request.getEndDate(), dateFormatter);
+
+        if (startDate.isAfter(endDate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
+        }
+
+        trip.setStartDate(startDate);
+        trip.setEndDate(endDate);
+        Trip saved = tripRepository.save(trip);
+
+        return toDetailResponse(saved);
+    }
+
+    @Transactional
     public ParticipantResponse addParticipant(Long tripId, ParticipantRequest request) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));

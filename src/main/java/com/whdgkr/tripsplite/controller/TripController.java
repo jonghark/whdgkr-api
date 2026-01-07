@@ -41,6 +41,11 @@ public class TripController {
         tripService.deleteTrip(tripId);
     }
 
+    @PatchMapping("/{tripId}")
+    public TripResponse updateTrip(@PathVariable Long tripId, @RequestBody TripUpdateRequest request) {
+        return tripService.updateTrip(tripId, request);
+    }
+
     // Participant management endpoints
     @PostMapping("/{tripId}/participants")
     @ResponseStatus(HttpStatus.CREATED)
