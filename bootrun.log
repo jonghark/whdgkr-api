@@ -1,0 +1,219 @@
+> Task :clean
+> Task :compileJava
+> Task :processResources
+> Task :classes
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.1)
+
+2026-01-05T02:20:40.672+09:00  INFO 35941 --- [splitwise-backend] [           main] c.whdgkr.splitwise.SplitwiseApplication  : Starting SplitwiseApplication using Java 17.0.17 with PID 35941 (/Users/moneystar/whdgkr/backend/build/classes/java/main started by moneystar in /Users/moneystar/whdgkr/backend)
+2026-01-05T02:20:40.673+09:00  INFO 35941 --- [splitwise-backend] [           main] c.whdgkr.splitwise.SplitwiseApplication  : No active profile set, falling back to 1 default profile: "default"
+2026-01-05T02:20:40.877+09:00  INFO 35941 --- [splitwise-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-01-05T02:20:40.901+09:00  INFO 35941 --- [splitwise-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 6 JPA repository interfaces.
+2026-01-05T02:20:41.076+09:00  INFO 35941 --- [splitwise-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-01-05T02:20:41.080+09:00  INFO 35941 --- [splitwise-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-05T02:20:41.080+09:00  INFO 35941 --- [splitwise-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.17]
+2026-01-05T02:20:41.099+09:00  INFO 35941 --- [splitwise-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-05T02:20:41.100+09:00  INFO 35941 --- [splitwise-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 408 ms
+2026-01-05T02:20:41.139+09:00  INFO 35941 --- [splitwise-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-05T02:20:41.198+09:00  INFO 35941 --- [splitwise-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@306c7bf6
+2026-01-05T02:20:41.199+09:00  INFO 35941 --- [splitwise-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-05T02:20:41.230+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.c.internal.license.VersionPrinter    : Flyway Community Edition 9.22.3 by Redgate
+2026-01-05T02:20:41.230+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.c.internal.license.VersionPrinter    : See release notes here: https://rd.gt/416ObMi
+2026-01-05T02:20:41.230+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.c.internal.license.VersionPrinter    : 
+2026-01-05T02:20:41.240+09:00  INFO 35941 --- [splitwise-backend] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:mysql://localhost:3306/splitwise_like (MySQL 8.0)
+2026-01-05T02:20:41.266+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.011s)
+2026-01-05T02:20:41.275+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema `splitwise_like`: 1
+2026-01-05T02:20:41.280+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema `splitwise_like` to version "2 - add friends"
+2026-01-05T02:20:41.329+09:00  INFO 35941 --- [splitwise-backend] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema `splitwise_like`, now at version v2 (execution time 00:00.040s)
+2026-01-05T02:20:41.356+09:00  INFO 35941 --- [splitwise-backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-01-05T02:20:41.371+09:00  INFO 35941 --- [splitwise-backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2026-01-05T02:20:41.380+09:00  INFO 35941 --- [splitwise-backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-01-05T02:20:41.452+09:00  INFO 35941 --- [splitwise-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-01-05T02:20:41.470+09:00  WARN 35941 --- [splitwise-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-01-05T02:20:41.470+09:00  WARN 35941 --- [splitwise-backend] [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2026-01-05T02:20:41.768+09:00  INFO 35941 --- [splitwise-backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-01-05T02:20:41.783+09:00  INFO 35941 --- [splitwise-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-01-05T02:20:41.937+09:00  WARN 35941 --- [splitwise-backend] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-01-05T02:20:42.059+09:00  INFO 35941 --- [splitwise-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-01-05T02:20:42.062+09:00  INFO 35941 --- [splitwise-backend] [           main] c.whdgkr.splitwise.SplitwiseApplication  : Started SplitwiseApplication in 1.529 seconds (process running for 1.659)
+2026-01-05T02:20:59.233+09:00  INFO 35941 --- [splitwise-backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-05T02:20:59.233+09:00  INFO 35941 --- [splitwise-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-05T02:20:59.234+09:00  INFO 35941 --- [splitwise-backend] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-01-05T02:20:59.283+09:00 DEBUG 35941 --- [splitwise-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+2026-01-05T02:21:15.703+09:00 DEBUG 35941 --- [splitwise-backend] [nio-8080-exec-2] org.hibernate.SQL                        : 
+    insert 
+    into
+        friends
+        (created_at, email, name, phone, updated_at) 
+    values
+        (?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        friends
+        (created_at, email, name, phone, updated_at) 
+    values
+        (?, ?, ?, ?, ?)
+2026-01-05T02:23:23.806+09:00 DEBUG 35941 --- [splitwise-backend] [nio-8080-exec-5] org.hibernate.SQL                        : 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+2026-01-05T02:23:38.656+09:00 DEBUG 35941 --- [splitwise-backend] [nio-8080-exec-7] org.hibernate.SQL                        : 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.end_date,
+        t1_0.start_date,
+        t1_0.title 
+    from
+        trips t1_0
+Hibernate: 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.end_date,
+        t1_0.start_date,
+        t1_0.title 
+    from
+        trips t1_0
+2026-01-05T02:24:31.136+09:00 DEBUG 35941 --- [splitwise-backend] [io-8080-exec-10] org.hibernate.SQL                        : 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    where
+        f1_0.id=?
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    where
+        f1_0.id=?
+2026-01-05T02:24:31.141+09:00 DEBUG 35941 --- [splitwise-backend] [io-8080-exec-10] org.hibernate.SQL                        : 
+    update
+        friends 
+    set
+        created_at=?,
+        email=?,
+        name=?,
+        phone=?,
+        updated_at=? 
+    where
+        id=?
+Hibernate: 
+    update
+        friends 
+    set
+        created_at=?,
+        email=?,
+        name=?,
+        phone=?,
+        updated_at=? 
+    where
+        id=?
+2026-01-05T02:24:31.162+09:00 DEBUG 35941 --- [splitwise-backend] [nio-8080-exec-1] org.hibernate.SQL                        : 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.created_at,
+        f1_0.email,
+        f1_0.name,
+        f1_0.phone,
+        f1_0.updated_at 
+    from
+        friends f1_0 
+    order by
+        f1_0.name
+2026-01-05T02:29:44.988+09:00  INFO 35941 --- [splitwise-backend] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-01-05T02:29:44.990+09:00  INFO 35941 --- [splitwise-backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-01-05T02:29:44.993+09:00  INFO 35941 --- [splitwise-backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+> Task :bootRun FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':bootRun'.
+> Process 'command '/opt/homebrew/Cellar/openjdk@17/17.0.17/libexec/openjdk.jdk/Contents/Home/bin/java'' finished with non-zero exit value 143
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 9m 5s
+4 actionable tasks: 4 executed
