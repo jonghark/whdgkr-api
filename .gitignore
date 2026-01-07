@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Build artifacts
+**/*.class.uniqueId*
+**/*.class.uniqueId
+out/
+
+# Local configuration
+local.properties
