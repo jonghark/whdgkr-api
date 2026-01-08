@@ -122,6 +122,19 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date must be before or equal to end date");
         }
 
+        // 지출 날짜가 새 기간에 포함되는지 검증
+        List<LocalDate> expenseDates = trip.getExpenses().stream()
+                .filter(e -> "N".equals(e.getDeleteYn()))
+                .map(e -> e.getOccurredAt().toLocalDate())
+                .toList();
+
+        for (LocalDate expenseDate : expenseDates) {
+            if (expenseDate.isBefore(startDate) || expenseDate.isAfter(endDate)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "지출 내역이 존재하는 날짜를 제외할 수 없습니다.");
+            }
+        }
+
         trip.setStartDate(startDate);
         trip.setEndDate(endDate);
         Trip saved = tripRepository.save(trip);
