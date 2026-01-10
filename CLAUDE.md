@@ -64,6 +64,8 @@ whdgkr-api/
 | PUT | /api/trips/expenses/{id} | 지출 수정 |
 | DELETE | /api/trips/expenses/{id} | 지출 삭제 |
 | GET | /api/trips/{id}/settlement | 정산 결과 조회 |
+| POST | /api/dev/reset | 데이터 전체 초기화 (개발 전용) |
+| GET | /api/dev/stats | 데이터 통계 조회 (개발 전용) |
 
 ## Git 관리 정책
 - `build/` 디렉토리 Git ignore 처리
@@ -88,3 +90,10 @@ whdgkr-api/
 - 문서 정책 통합 (CLAUDE.md 단일화)
 - 여행 일정 수정 시 지출 날짜 검증 추가
   - 지출 날짜가 새 기간 밖으로 밀려나는 변경 시 409 CONFLICT 반환
+
+### 2026-01-10
+- 개발자 도구 API 추가
+  - POST /api/dev/reset: 전체 데이터 초기화 (앱 최초 설치 상태 복원)
+  - GET /api/dev/stats: 데이터 통계 조회
+  - DELETE 방식 사용 (TRUNCATE/DROP 절대 금지)
+  - DevController, DevService 추가
