@@ -12,6 +12,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SettlementService {
@@ -23,17 +26,17 @@ public class SettlementService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));
 
-        // Only active participants for settlement
+        // 활성 동행자 목록 (UI 표시용)
         List<Participant> activeParticipants = trip.getParticipants().stream()
                 .filter(p -> "N".equals(p.getDeleteYn()))
                 .toList();
 
-        // Only active expenses for calculation
+        // 활성 지출만 계산
         List<Expense> activeExpenses = trip.getExpenses().stream()
                 .filter(e -> "N".equals(e.getDeleteYn()))
                 .toList();
 
-        // Calculate balances for each active participant
+        // 활성 동행자의 잔액 계산
         Map<Long, Integer> paidTotals = new HashMap<>();
         Map<Long, Integer> shareTotals = new HashMap<>();
 
@@ -43,20 +46,22 @@ public class SettlementService {
         }
 
         for (Expense expense : activeExpenses) {
-            // Only count active payments
+            // 활성 결제 기록 처리
             for (ExpensePayment payment : expense.getPayments()) {
                 if ("N".equals(payment.getDeleteYn())) {
                     Long participantId = payment.getParticipant().getId();
+                    // 활성 동행자의 결제만 계산 (삭제된 동행자 제외)
                     if (paidTotals.containsKey(participantId)) {
                         paidTotals.put(participantId, paidTotals.get(participantId) + payment.getAmount());
                     }
                 }
             }
 
-            // Only count active shares
+            // 활성 분배 기록 처리
             for (ExpenseShare share : expense.getShares()) {
                 if ("N".equals(share.getDeleteYn())) {
                     Long participantId = share.getParticipant().getId();
+                    // 활성 동행자의 분배만 계산 (삭제된 동행자 제외)
                     if (shareTotals.containsKey(participantId)) {
                         shareTotals.put(participantId, shareTotals.get(participantId) + share.getAmount());
                     }
@@ -64,16 +69,24 @@ public class SettlementService {
             }
         }
 
-        // Build balance list
+        // 잔액 목록 생성
         List<SettlementResponse.ParticipantBalance> balances = new ArrayList<>();
         Map<Long, String> participantNames = activeParticipants.stream()
                 .collect(Collectors.toMap(Participant::getId, Participant::getName));
+
+        int totalPaid = 0;
+        int totalShare = 0;
+        int totalNetBalance = 0;
 
         for (Participant participant : activeParticipants) {
             Long participantId = participant.getId();
             int paid = paidTotals.get(participantId);
             int share = shareTotals.get(participantId);
             int netBalance = paid - share;
+
+            totalPaid += paid;
+            totalShare += share;
+            totalNetBalance += netBalance;
 
             balances.add(SettlementResponse.ParticipantBalance.builder()
                     .participantId(participantId)
@@ -82,6 +95,14 @@ public class SettlementService {
                     .shareTotal(share)
                     .netBalance(netBalance)
                     .build());
+        }
+
+        // 정산 금액 합계 검증 로그
+        log.info("Settlement calculation for tripId={}: totalPaid={}, totalShare={}, totalNetBalance={}",
+                tripId, totalPaid, totalShare, totalNetBalance);
+
+        if (totalNetBalance != 0) {
+            log.warn("Settlement balance mismatch! tripId={}, totalNetBalance={} (expected 0)", tripId, totalNetBalance);
         }
 
         // Calculate total expense
