@@ -15,6 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExpenseService {
@@ -136,6 +139,18 @@ public class ExpenseService {
     }
 
     private void validateExpenseRequest(ExpenseRequest request) {
+        log.info("Validating expense request: title={}, totalAmount={}", request.getTitle(), request.getTotalAmount());
+
+        if (request.getPayments() == null || request.getPayments().isEmpty()) {
+            log.warn("Validation failed: no payments provided");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "결제자 정보가 필요합니다");
+        }
+
+        if (request.getShares() == null || request.getShares().isEmpty()) {
+            log.warn("Validation failed: no shares provided");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "분배 대상이 필요합니다");
+        }
+
         int paymentSum = request.getPayments().stream()
                 .mapToInt(ExpenseRequest.PaymentItem::getAmount)
                 .sum();
@@ -144,15 +159,21 @@ public class ExpenseService {
                 .mapToInt(ExpenseRequest.ShareItem::getAmount)
                 .sum();
 
+        log.info("Validation sums: paymentSum={}, shareSum={}, totalAmount={}", paymentSum, shareSum, request.getTotalAmount());
+
         if (paymentSum != request.getTotalAmount()) {
-            throw new IllegalArgumentException(
-                    "Payment sum (" + paymentSum + ") does not match total amount (" + request.getTotalAmount() + ")");
+            log.warn("Validation failed: payment sum ({}) != total amount ({})", paymentSum, request.getTotalAmount());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "결제 금액 합계(" + paymentSum + ")가 총액(" + request.getTotalAmount() + ")과 일치하지 않습니다");
         }
 
         if (shareSum != request.getTotalAmount()) {
-            throw new IllegalArgumentException(
-                    "Share sum (" + shareSum + ") does not match total amount (" + request.getTotalAmount() + ")");
+            log.warn("Validation failed: share sum ({}) != total amount ({})", shareSum, request.getTotalAmount());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "분배 금액 합계(" + shareSum + ")가 총액(" + request.getTotalAmount() + ")과 일치하지 않습니다");
         }
+
+        log.info("Expense request validation passed");
     }
 
     private ExpenseResponse toResponse(Expense expense) {

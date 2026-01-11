@@ -95,6 +95,9 @@ public class TripService {
                         .isOwner(Boolean.TRUE.equals(info.getIsOwner()))
                         .build();
                 participants.add(participantRepository.save(participant));
+
+                // 동행자를 친구 목록에도 자동 등록
+                autoRegisterAsFriend(info.getName(), info.getPhone(), info.getEmail());
             }
         }
 
@@ -156,7 +159,50 @@ public class TripService {
                 .build();
 
         Participant saved = participantRepository.save(participant);
+
+        // 동행자 추가 시 친구 목록에도 자동 등록 (phone 또는 email 있는 경우만)
+        autoRegisterAsFriend(request.getName(), request.getPhone(), request.getEmail());
+
         return toParticipantResponse(saved);
+    }
+
+    /**
+     * 동행자를 친구 목록에 자동 등록 (중복 방지)
+     * - phone 또는 email 중 하나라도 있어야 등록
+     * - 동일 phone 또는 email이 이미 존재하면 등록하지 않음
+     */
+    private void autoRegisterAsFriend(String name, String phone, String email) {
+        // phone과 email 모두 없으면 친구 등록 생략
+        if ((phone == null || phone.trim().isEmpty()) && (email == null || email.trim().isEmpty())) {
+            return;
+        }
+
+        // 정규화
+        String normalizedPhone = phone != null ? phone.replaceAll("[^0-9]", "") : null;
+        String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
+
+        // 중복 체크: phone으로 검색
+        if (normalizedPhone != null && !normalizedPhone.isEmpty()) {
+            if (friendRepository.findByPhone(normalizedPhone).isPresent()) {
+                return; // 이미 존재하면 등록하지 않음
+            }
+        }
+
+        // 중복 체크: email로 검색
+        if (normalizedEmail != null && !normalizedEmail.isEmpty()) {
+            if (friendRepository.findByEmail(normalizedEmail).isPresent()) {
+                return; // 이미 존재하면 등록하지 않음
+            }
+        }
+
+        // 새 친구 등록
+        Friend newFriend = Friend.builder()
+                .name(name)
+                .phone(normalizedPhone != null && !normalizedPhone.isEmpty() ? normalizedPhone : null)
+                .email(normalizedEmail != null && !normalizedEmail.isEmpty() ? normalizedEmail : null)
+                .build();
+
+        friendRepository.save(newFriend);
     }
 
     @Transactional
