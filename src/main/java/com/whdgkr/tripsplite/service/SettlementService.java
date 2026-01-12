@@ -23,6 +23,11 @@ public class SettlementService {
 
     @Transactional(readOnly = true)
     public SettlementResponse calculateSettlement(Long tripId) {
+        return calculateSettlement(tripId, "UNSETTLED");
+    }
+
+    @Transactional(readOnly = true)
+    public SettlementResponse calculateSettlement(Long tripId, String scope) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));
 
@@ -31,9 +36,10 @@ public class SettlementService {
                 .filter(p -> "N".equals(p.getDeleteYn()))
                 .toList();
 
-        // 활성 지출만 계산
+        // 활성 지출만 계산 (scope에 따라 필터링)
         List<Expense> activeExpenses = trip.getExpenses().stream()
                 .filter(e -> "N".equals(e.getDeleteYn()))
+                .filter(e -> "ALL".equalsIgnoreCase(scope) || "N".equals(e.getSettledYn()))
                 .toList();
 
         // 활성 동행자의 잔액 계산

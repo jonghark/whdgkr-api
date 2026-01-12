@@ -61,8 +61,10 @@ public class TripController {
 
     // Settlement endpoint
     @GetMapping("/{tripId}/settlement")
-    public SettlementResponse getSettlement(@PathVariable Long tripId) {
-        return settlementService.calculateSettlement(tripId);
+    public SettlementResponse getSettlement(
+            @PathVariable Long tripId,
+            @RequestParam(defaultValue = "UNSETTLED") String scope) {
+        return settlementService.calculateSettlement(tripId, scope);
     }
 
     // Expense endpoints
@@ -81,5 +83,12 @@ public class TripController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteExpense(@PathVariable Long expenseId) {
         expenseService.deleteExpense(expenseId);
+    }
+
+    @PatchMapping("/expenses/{expenseId}/settled")
+    public ExpenseResponse updateExpenseSettled(
+            @PathVariable Long expenseId,
+            @RequestBody ExpenseSettledRequest request) {
+        return expenseService.updateSettledStatus(expenseId, Boolean.TRUE.equals(request.getSettled()));
     }
 }

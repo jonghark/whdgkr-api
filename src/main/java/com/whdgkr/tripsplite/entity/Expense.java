@@ -43,6 +43,13 @@ public class Expense {
     @Builder.Default
     private String deleteYn = "N";
 
+    @Column(name = "settled_yn", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Builder.Default
+    private String settledYn = "N";
+
+    @Column(name = "settled_at")
+    private LocalDateTime settledAt;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -65,5 +72,13 @@ public class Expense {
 
     public boolean isActive() {
         return "N".equals(deleteYn);
+    }
+
+    public boolean isSettled() {
+        return "Y".equals(settledYn);
+    }
+
+    public boolean isUnsettled() {
+        return "N".equals(settledYn);
     }
 }

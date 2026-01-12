@@ -14,6 +14,8 @@ public class ExpenseResponse {
     private Integer totalAmount;
     private String currency;
     private String createdAt;
+    private String settledYn;
+    private String settledAt;
     private List<PaymentDetail> payments;
     private List<ShareDetail> shares;
     

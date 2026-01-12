@@ -304,6 +304,8 @@ public class TripService {
                 .totalAmount(expense.getTotalAmount())
                 .currency(expense.getCurrency())
                 .createdAt(expense.getCreatedAt().format(dateTimeFormatter))
+                .settledYn(expense.getSettledYn())
+                .settledAt(expense.getSettledAt() != null ? expense.getSettledAt().format(dateTimeFormatter) : null)
                 .payments(payments)
                 .shares(shares)
                 .build();

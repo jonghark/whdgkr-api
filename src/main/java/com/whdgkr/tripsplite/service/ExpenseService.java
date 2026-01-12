@@ -202,8 +202,26 @@ public class ExpenseService {
                 .totalAmount(expense.getTotalAmount())
                 .currency(expense.getCurrency())
                 .createdAt(expense.getCreatedAt().format(dateTimeFormatter))
+                .settledYn(expense.getSettledYn())
+                .settledAt(expense.getSettledAt() != null ? expense.getSettledAt().format(dateTimeFormatter) : null)
                 .payments(payments)
                 .shares(shares)
                 .build();
+    }
+
+    @Transactional
+    public ExpenseResponse updateSettledStatus(Long expenseId, boolean settled) {
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found: " + expenseId));
+
+        if (expense.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found: " + expenseId);
+        }
+
+        expense.setSettledYn(settled ? "Y" : "N");
+        expense.setSettledAt(settled ? LocalDateTime.now() : null);
+
+        Expense result = expenseRepository.save(expense);
+        return toResponse(result);
     }
 }
