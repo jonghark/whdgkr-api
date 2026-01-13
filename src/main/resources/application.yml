@@ -3,9 +3,9 @@ spring:
     name: tripsplite-backend
   
   datasource:
-    url: jdbc:mysql://localhost:3306/splitwise_like?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: appuser
-    password: 1234
+    url: jdbc:mysql://my8003.gabiadb.com:3306/imchongmu?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: chongmu
+    password: chongmu12!@
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
