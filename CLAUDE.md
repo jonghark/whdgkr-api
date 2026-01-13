@@ -51,6 +51,17 @@ whdgkr-api/
 - 동행자 카운트는 deleteYn='N' 기준
 
 ## API 엔드포인트
+
+### 인증 API
+| Method | Path | 설명 |
+|--------|------|------|
+| POST | /api/auth/signup | 회원가입 |
+| POST | /api/auth/login | 로그인 (JWT 발급) |
+| POST | /api/auth/refresh | 토큰 재발급 |
+| POST | /api/auth/logout | 로그아웃 |
+| GET | /api/members/me | 내 정보 조회 |
+
+### 여행 API
 | Method | Path | 설명 |
 |--------|------|------|
 | GET | /api/trips | 여행 목록 조회 |
@@ -64,8 +75,20 @@ whdgkr-api/
 | PUT | /api/trips/expenses/{id} | 지출 수정 |
 | DELETE | /api/trips/expenses/{id} | 지출 삭제 |
 | GET | /api/trips/{id}/settlement | 정산 결과 조회 |
-| POST | /api/dev/reset | 데이터 전체 초기화 (개발 전용) |
-| GET | /api/dev/stats | 데이터 통계 조회 (개발 전용) |
+
+### 친구 API
+| Method | Path | 설명 |
+|--------|------|------|
+| GET | /api/friends | 내 친구 목록 조회 |
+| POST | /api/friends | 친구 추가 (회원 매칭) |
+| PUT | /api/friends/{id} | 친구 정보 수정 |
+| DELETE | /api/friends/{id} | 친구 삭제 |
+
+### 개발자 도구 API
+| Method | Path | 설명 |
+|--------|------|------|
+| POST | /api/dev/reset | 데이터 전체 초기화 |
+| GET | /api/dev/stats | 데이터 통계 조회 |
 
 ## Git 관리 정책
 - `build/` 디렉토리 Git ignore 처리
@@ -97,3 +120,14 @@ whdgkr-api/
   - GET /api/dev/stats: 데이터 통계 조회
   - DELETE 방식 사용 (TRUNCATE/DROP 절대 금지)
   - DevController, DevService 추가
+
+### 2026-01-13
+- JWT 기반 로그인/회원가입 기능 추가
+  - Access Token (15분) + Refresh Token (14일)
+  - Refresh Token Rotation 정책 적용
+  - BCrypt 비밀번호 해시 저장
+  - Spring Security JWT 필터 구성
+- 회원(Member) 엔티티 추가
+- 친구(Friend) 회원 매칭 기능 추가
+  - loginId/email로 회원 검색 후 자동 매칭
+- Flyway 마이그레이션 V6~V8 추가
