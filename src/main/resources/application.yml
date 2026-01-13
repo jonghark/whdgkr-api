@@ -29,3 +29,8 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+jwt:
+  secret: TripSpliteSecretKeyForJWTTokenGenerationMustBe256BitsLong!!
+  access-token-expiry: 900000
+  refresh-token-expiry: 1209600000

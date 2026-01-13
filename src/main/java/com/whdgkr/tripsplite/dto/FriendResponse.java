@@ -12,5 +12,8 @@ public class FriendResponse {
     private String name;
     private String email;
     private String phone;
+    private Long friendMemberId;
+    private String matchedYn;
+    private LocalDateTime matchedAt;
     private LocalDateTime createdAt;
 }

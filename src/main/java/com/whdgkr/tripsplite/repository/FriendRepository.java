@@ -11,8 +11,9 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findAllByOrderByNameAsc();
     List<Friend> findByIdIn(List<Long> ids);
+    List<Friend> findByOwnerMemberIdAndDeleteYnOrderByNameAsc(Long ownerMemberId, String deleteYn);
 
-    // 중복 체크용 메서드
     Optional<Friend> findByPhone(String phone);
     Optional<Friend> findByEmail(String email);
+    Optional<Friend> findByOwnerMemberIdAndEmailAndDeleteYn(Long ownerMemberId, String email, String deleteYn);
 }

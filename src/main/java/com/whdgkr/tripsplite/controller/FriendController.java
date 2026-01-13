@@ -5,6 +5,7 @@ import com.whdgkr.tripsplite.dto.FriendResponse;
 import com.whdgkr.tripsplite.service.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class FriendController {
     private final FriendService friendService;
 
     @GetMapping
-    public List<FriendResponse> getAllFriends() {
-        return friendService.getAllFriends();
+    public List<FriendResponse> getMyFriends(@AuthenticationPrincipal Long memberId) {
+        return friendService.getMyFriends(memberId);
     }
 
     @GetMapping("/{id}")
@@ -28,8 +29,10 @@ public class FriendController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FriendResponse createFriend(@RequestBody FriendRequest request) {
-        return friendService.createFriend(request);
+    public FriendResponse createFriend(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody FriendRequest request) {
+        return friendService.createFriend(memberId, request);
     }
 
     @PutMapping("/{id}")

@@ -9,39 +9,27 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "friends")
+@Table(name = "members")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Friend {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_member_id")
-    private Member ownerMember;
+    @Column(name = "login_id", nullable = false, unique = true, length = 50)
+    private String loginId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friend_member_id")
-    private Member friendMember;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
-
-    @Column(length = 20, unique = true)
-    private String phone;
-
-    @Column(name = "matched_yn", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    @Builder.Default
-    private String matchedYn = "N";
-
-    @Column(name = "matched_at")
-    private LocalDateTime matchedAt;
 
     @Column(name = "delete_yn", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
     @Builder.Default
@@ -64,17 +52,7 @@ public class Friend {
         updatedAt = LocalDateTime.now();
     }
 
-    public boolean isMatched() {
-        return "Y".equals(matchedYn);
-    }
-
     public boolean isActive() {
         return "N".equals(deleteYn);
-    }
-
-    public void matchWithMember(Member member) {
-        this.friendMember = member;
-        this.matchedYn = "Y";
-        this.matchedAt = LocalDateTime.now();
     }
 }
