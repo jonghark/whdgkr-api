@@ -131,3 +131,15 @@ whdgkr-api/
 - 친구(Friend) 회원 매칭 기능 추가
   - loginId/email로 회원 검색 후 자동 매칭
 - Flyway 마이그레이션 V6~V8 추가
+
+### 2026-01-14
+- 로그인/회원가입 403 오류 수정
+  - JwtAuthenticationFilter: auth/dev 엔드포인트 shouldNotFilter 처리
+  - SecurityConfig: AuthenticationEntryPoint, AccessDeniedHandler 추가
+  - GlobalExceptionHandler: ResponseStatusException 핸들러 추가
+- HTTP 상태코드 정리
+  - 인증 실패: 401 Unauthorized
+  - 입력값 검증 실패: 400 Bad Request
+  - 권한 없음: 403 Forbidden
+  - 서버 오류: 500 Internal Server Error
+- Security 디버깅 로그 추가
