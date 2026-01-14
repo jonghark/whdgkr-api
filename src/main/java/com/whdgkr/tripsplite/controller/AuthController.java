@@ -3,6 +3,7 @@ package com.whdgkr.tripsplite.controller;
 import com.whdgkr.tripsplite.dto.*;
 import com.whdgkr.tripsplite.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<MemberResponse> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
         return ResponseEntity.ok(authService.signup(request));
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
-            @RequestBody LoginRequest request,
+            @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
         String userAgent = httpRequest.getHeader("User-Agent");
         String ipAddress = getClientIp(httpRequest);
