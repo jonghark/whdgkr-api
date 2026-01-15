@@ -5,9 +5,11 @@ import com.whdgkr.tripsplite.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -17,6 +19,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
+        // [OBS] SERVER 레이어 진입 확인
+        log.info("[OBS] SERVER_ENTER /auth/signup loginId={}", request.getLoginId());
         return ResponseEntity.ok(authService.signup(request));
     }
 
