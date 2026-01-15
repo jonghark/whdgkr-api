@@ -7,6 +7,13 @@ spring:
     username: chongmu
     password: chongmu12!@
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 600000
+      connection-timeout: 10000
+      validation-timeout: 3000
   
   jpa:
     hibernate:
