@@ -8,6 +8,7 @@ import com.whdgkr.tripsplite.repository.RefreshTokenRepository;
 import com.whdgkr.tripsplite.security.JwtProvider;
 import com.whdgkr.tripsplite.security.TokenHashUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -27,6 +29,8 @@ public class AuthService {
 
     @Transactional
     public MemberResponse signup(SignupRequest request) {
+        log.error("[SIGNUP] SERVICE ENTERED");
+
         if (memberRepository.existsByLoginId(request.getLoginId())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Login ID already exists");
         }
@@ -42,6 +46,8 @@ public class AuthService {
                 .build();
 
         Member saved = memberRepository.save(member);
+
+        log.error("[SIGNUP] AFTER SAVE id={}", saved.getId());
 
         return MemberResponse.builder()
                 .memberId(saved.getId())

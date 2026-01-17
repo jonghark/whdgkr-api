@@ -19,9 +19,13 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
-        // [OBS] SERVER 레이어 진입 확인
-        log.info("[OBS] SERVER_ENTER /auth/signup loginId={}", request.getLoginId());
-        return ResponseEntity.ok(authService.signup(request));
+        log.error("[SIGNUP] CONTROLLER ENTERED");
+        log.error("[SIGNUP] PAYLOAD = {}", request);
+
+        MemberResponse response = authService.signup(request);
+
+        log.error("[SIGNUP] CONTROLLER EXIT");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
