@@ -19,12 +19,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
-        log.error("[SIGNUP] CONTROLLER ENTERED");
-        log.error("[SIGNUP] PAYLOAD = {}", request);
-
+        log.info("[SIGNUP] entered - id={}, email={}", request.getLoginId(), request.getEmail());
         MemberResponse response = authService.signup(request);
-
-        log.error("[SIGNUP] CONTROLLER EXIT");
         return ResponseEntity.ok(response);
     }
 
