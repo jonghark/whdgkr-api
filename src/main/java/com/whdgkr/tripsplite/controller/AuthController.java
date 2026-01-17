@@ -18,8 +18,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request) {
-        log.info("[SIGNUP] entered - id={}, email={}", request.getLoginId(), request.getEmail());
+    public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request, HttpServletRequest httpRequest) {
+        log.info("### SIGNUP_HIT ### uri={} id={} email={}", httpRequest.getRequestURI(), request.getLoginId(), request.getEmail());
         MemberResponse response = authService.signup(request);
         return ResponseEntity.ok(response);
     }

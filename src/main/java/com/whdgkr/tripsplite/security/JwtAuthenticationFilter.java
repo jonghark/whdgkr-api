@@ -46,6 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+
+        // Auth 엔드포인트는 절대 건드리지 않음 (이중 안전장치)
+        if (path.startsWith("/api/auth/signup") || path.startsWith("/api/auth/login")
+                || path.startsWith("/api/auth/refresh") || path.startsWith("/api/dev/")) {
+            log.debug("[JWT Filter] Skipping auth check for: {}", path);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.debug("[JWT Filter] Processing request: {} {}", request.getMethod(), path);
 
         String token = extractToken(request);
