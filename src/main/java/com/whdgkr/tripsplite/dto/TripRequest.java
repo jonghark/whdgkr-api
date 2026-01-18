@@ -15,6 +15,7 @@ public class TripRequest {
 
     @Data
     public static class ParticipantInfo {
+        private Long friendId;
         private String name;
         private String phone;
         private String email;

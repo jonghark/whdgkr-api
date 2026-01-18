@@ -125,8 +125,14 @@ public class TripService {
         // Create participants from detailed participant info
         if (request.getParticipants() != null && !request.getParticipants().isEmpty()) {
             for (TripRequest.ParticipantInfo info : request.getParticipants()) {
+                Friend friend = null;
+                if (info.getFriendId() != null) {
+                    friend = friendRepository.findById(info.getFriendId()).orElse(null);
+                }
+
                 Participant participant = Participant.builder()
                         .trip(saved)
+                        .friend(friend)
                         .name(info.getName())
                         .phone(info.getPhone())
                         .email(info.getEmail())
@@ -134,8 +140,10 @@ public class TripService {
                         .build();
                 participants.add(participantRepository.save(participant));
 
-                // 동행자를 친구 목록에도 자동 등록
-                autoRegisterAsFriend(memberId, info.getName(), info.getPhone(), info.getEmail());
+                // friendId가 없는 경우에만 친구 목록에 자동 등록
+                if (info.getFriendId() == null) {
+                    autoRegisterAsFriend(memberId, info.getName(), info.getPhone(), info.getEmail());
+                }
             }
         }
 

@@ -33,6 +33,10 @@ public class Participant {
     @Column(length = 100)
     private String email;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "friend_id")
+    private Friend friend;
+
     @Column(name = "is_owner", nullable = false)
     @Builder.Default
     private Boolean isOwner = false;
