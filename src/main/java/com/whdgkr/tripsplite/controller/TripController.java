@@ -37,8 +37,8 @@ public class TripController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TripResponse createTrip(@RequestBody TripRequest request) {
-        return tripService.createTrip(request);
+    public TripResponse createTrip(@AuthenticationPrincipal Long memberId, @RequestBody TripRequest request) {
+        return tripService.createTrip(memberId, request);
     }
 
     @DeleteMapping("/{tripId}")
@@ -55,8 +55,11 @@ public class TripController {
     // Participant management endpoints
     @PostMapping("/{tripId}/participants")
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipantResponse addParticipant(@PathVariable Long tripId, @RequestBody ParticipantRequest request) {
-        return tripService.addParticipant(tripId, request);
+    public ParticipantResponse addParticipant(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long tripId,
+            @RequestBody ParticipantRequest request) {
+        return tripService.addParticipant(memberId, tripId, request);
     }
 
     @DeleteMapping("/{tripId}/participants/{participantId}")

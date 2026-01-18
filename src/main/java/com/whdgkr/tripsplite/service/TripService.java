@@ -2,9 +2,11 @@ package com.whdgkr.tripsplite.service;
 
 import com.whdgkr.tripsplite.dto.*;
 import com.whdgkr.tripsplite.entity.Friend;
+import com.whdgkr.tripsplite.entity.Member;
 import com.whdgkr.tripsplite.entity.Participant;
 import com.whdgkr.tripsplite.entity.Trip;
 import com.whdgkr.tripsplite.repository.FriendRepository;
+import com.whdgkr.tripsplite.repository.MemberRepository;
 import com.whdgkr.tripsplite.repository.ParticipantRepository;
 import com.whdgkr.tripsplite.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class TripService {
     private final TripRepository tripRepository;
     private final FriendRepository friendRepository;
     private final ParticipantRepository participantRepository;
+    private final MemberRepository memberRepository;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -79,7 +82,7 @@ public class TripService {
     }
 
     @Transactional
-    public TripResponse createTrip(TripRequest request) {
+    public TripResponse createTrip(Long memberId, TripRequest request) {
         // Validate: at least one participant required
         if ((request.getParticipants() == null || request.getParticipants().isEmpty()) &&
             (request.getFriendIds() == null || request.getFriendIds().isEmpty())) {
@@ -132,7 +135,7 @@ public class TripService {
                 participants.add(participantRepository.save(participant));
 
                 // 동행자를 친구 목록에도 자동 등록
-                autoRegisterAsFriend(info.getName(), info.getPhone(), info.getEmail());
+                autoRegisterAsFriend(memberId, info.getName(), info.getPhone(), info.getEmail());
             }
         }
 
@@ -181,7 +184,7 @@ public class TripService {
     }
 
     @Transactional
-    public ParticipantResponse addParticipant(Long tripId, ParticipantRequest request) {
+    public ParticipantResponse addParticipant(Long memberId, Long tripId, ParticipantRequest request) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));
 
@@ -196,7 +199,7 @@ public class TripService {
         Participant saved = participantRepository.save(participant);
 
         // 동행자 추가 시 친구 목록에도 자동 등록 (phone 또는 email 있는 경우만)
-        autoRegisterAsFriend(request.getName(), request.getPhone(), request.getEmail());
+        autoRegisterAsFriend(memberId, request.getName(), request.getPhone(), request.getEmail());
 
         return toParticipantResponse(saved);
     }
@@ -206,7 +209,7 @@ public class TripService {
      * - phone 또는 email 중 하나라도 있어야 등록
      * - 동일 phone 또는 email이 이미 존재하면 등록하지 않음
      */
-    private void autoRegisterAsFriend(String name, String phone, String email) {
+    private void autoRegisterAsFriend(Long memberId, String name, String phone, String email) {
         // phone과 email 모두 없으면 친구 등록 생략
         if ((phone == null || phone.trim().isEmpty()) && (email == null || email.trim().isEmpty())) {
             return;
@@ -216,25 +219,31 @@ public class TripService {
         String normalizedPhone = phone != null ? phone.replaceAll("[^0-9]", "") : null;
         String normalizedEmail = email != null ? email.trim().toLowerCase() : null;
 
-        // 중복 체크: phone으로 검색
+        // 중복 체크: phone으로 검색 (같은 owner의 친구 중에서)
         if (normalizedPhone != null && !normalizedPhone.isEmpty()) {
-            if (friendRepository.findByPhone(normalizedPhone).isPresent()) {
+            if (friendRepository.findByOwnerMemberIdAndPhoneAndDeleteYn(memberId, normalizedPhone, "N").isPresent()) {
                 return; // 이미 존재하면 등록하지 않음
             }
         }
 
-        // 중복 체크: email로 검색
+        // 중복 체크: email로 검색 (같은 owner의 친구 중에서)
         if (normalizedEmail != null && !normalizedEmail.isEmpty()) {
-            if (friendRepository.findByEmail(normalizedEmail).isPresent()) {
+            if (friendRepository.findByOwnerMemberIdAndEmailAndDeleteYn(memberId, normalizedEmail, "N").isPresent()) {
                 return; // 이미 존재하면 등록하지 않음
             }
         }
 
-        // 새 친구 등록
+        // Owner member 조회
+        Member ownerMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found: " + memberId));
+
+        // 새 친구 등록 (friendId는 null - 자동 등록된 친구는 loginId가 없음)
         Friend newFriend = Friend.builder()
+                .ownerMember(ownerMember)
                 .name(name)
                 .phone(normalizedPhone != null && !normalizedPhone.isEmpty() ? normalizedPhone : null)
                 .email(normalizedEmail != null && !normalizedEmail.isEmpty() ? normalizedEmail : null)
+                .friendId(null) // 자동 등록 시에는 null
                 .build();
 
         friendRepository.save(newFriend);
