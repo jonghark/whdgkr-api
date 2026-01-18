@@ -1,6 +1,7 @@
 package com.whdgkr.tripsplite.service;
 
 import com.whdgkr.tripsplite.repository.*;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,75 +13,52 @@ import java.util.Map;
 /**
  * 개발/테스트 전용 서비스
  * - 데이터 초기화 등 개발 편의 기능 제공
- *
- * - DELETE 방식만 사용 (TRUNCATE/DROP 절대 금지)
+ * - TRUNCATE 사용
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DevService {
 
+    private final EntityManager entityManager;
     private final ExpenseShareRepository expenseShareRepository;
     private final ExpensePaymentRepository expensePaymentRepository;
     private final ExpenseRepository expenseRepository;
     private final ParticipantRepository participantRepository;
     private final TripRepository tripRepository;
     private final FriendRepository friendRepository;
+    private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 모든 데이터 초기화 (앱 최초 설치 상태로 복원)
-     *
-     * 삭제 순서 (FK 제약 준수):
-     * 1. expense_shares
-     * 2. expense_payments
-     * 3. expenses
-     * 4. participants
-     * 5. trips
-     * 6. friends
-     *
-     * @return 테이블별 삭제된 레코드 수
+     * TRUNCATE 사용
      */
     @Transactional
     public Map<String, Integer> resetAllData() {
-        Map<String, Integer> deletedCounts = new LinkedHashMap<>();
+        Map<String, Integer> counts = new LinkedHashMap<>();
 
-        // 1. expense_shares 삭제
-        long shareCount = expenseShareRepository.count();
-        expenseShareRepository.deleteAll();
-        deletedCounts.put("expense_shares", (int) shareCount);
-        log.info("Deleted {} expense_shares", shareCount);
+        counts.put("expense_shares", (int) expenseShareRepository.count());
+        counts.put("expense_payments", (int) expensePaymentRepository.count());
+        counts.put("expenses", (int) expenseRepository.count());
+        counts.put("participants", (int) participantRepository.count());
+        counts.put("trips", (int) tripRepository.count());
+        counts.put("friends", (int) friendRepository.count());
+        counts.put("refresh_tokens", (int) refreshTokenRepository.count());
+        counts.put("members", (int) memberRepository.count());
 
-        // 2. expense_payments 삭제
-        long paymentCount = expensePaymentRepository.count();
-        expensePaymentRepository.deleteAll();
-        deletedCounts.put("expense_payments", (int) paymentCount);
-        log.info("Deleted {} expense_payments", paymentCount);
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE expense_shares").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE expense_payments").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE expenses").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE participants").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE trips").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE friends").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE refresh_tokens").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE TABLE members").executeUpdate();
+        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 
-        // 3. expenses 삭제
-        long expenseCount = expenseRepository.count();
-        expenseRepository.deleteAll();
-        deletedCounts.put("expenses", (int) expenseCount);
-        log.info("Deleted {} expenses", expenseCount);
-
-        // 4. participants 삭제
-        long participantCount = participantRepository.count();
-        participantRepository.deleteAll();
-        deletedCounts.put("participants", (int) participantCount);
-        log.info("Deleted {} participants", participantCount);
-
-        // 5. trips 삭제
-        long tripCount = tripRepository.count();
-        tripRepository.deleteAll();
-        deletedCounts.put("trips", (int) tripCount);
-        log.info("Deleted {} trips", tripCount);
-
-        // 6. friends 삭제
-        long friendCount = friendRepository.count();
-        friendRepository.deleteAll();
-        deletedCounts.put("friends", (int) friendCount);
-        log.info("Deleted {} friends", friendCount);
-
-        return deletedCounts;
+        return counts;
     }
 
     /**
@@ -90,12 +68,14 @@ public class DevService {
     public Map<String, Object> getDataStats() {
         Map<String, Object> stats = new LinkedHashMap<>();
 
+        stats.put("members", memberRepository.count());
+        stats.put("refresh_tokens", refreshTokenRepository.count());
+        stats.put("friends", friendRepository.count());
         stats.put("trips", tripRepository.count());
         stats.put("participants", participantRepository.count());
         stats.put("expenses", expenseRepository.count());
         stats.put("expense_payments", expensePaymentRepository.count());
         stats.put("expense_shares", expenseShareRepository.count());
-        stats.put("friends", friendRepository.count());
 
         return stats;
     }
