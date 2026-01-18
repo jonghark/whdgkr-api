@@ -29,15 +29,18 @@ public class AuthService {
 
     @Transactional
     public MemberResponse signup(SignupRequest request) {
-        log.error("[SIGNUP] SERVICE ENTERED");
+        log.info("[AUTH] register called: loginId={}, email={}", request.getLoginId(), request.getEmail());
 
         if (memberRepository.existsByLoginId(request.getLoginId())) {
+            log.warn("[AUTH] register failed: loginId already exists: {}", request.getLoginId());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Login ID already exists");
         }
         if (memberRepository.existsByEmail(request.getEmail())) {
+            log.warn("[AUTH] register failed: email already exists: {}", request.getEmail());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
 
+        log.info("[AUTH] Creating new member: loginId={}", request.getLoginId());
         Member member = Member.builder()
                 .loginId(request.getLoginId())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
@@ -45,9 +48,11 @@ public class AuthService {
                 .email(request.getEmail())
                 .build();
 
+        log.info("[AUTH] Saving member to database...");
         Member saved = memberRepository.save(member);
 
-        log.error("[SIGNUP] AFTER SAVE id={}", saved.getId());
+        log.info("[AUTH] saved: userId={}, loginId={}, name={}, email={}",
+                saved.getId(), saved.getLoginId(), saved.getName(), saved.getEmail());
 
         return MemberResponse.builder()
                 .memberId(saved.getId())

@@ -12,6 +12,7 @@ public class FriendResponse {
     private String name;
     private String email;
     private String phone;
+    private String friendId;  // 친구의 로그인 ID
     private Long friendMemberId;
     private String matchedYn;
     private LocalDateTime matchedAt;

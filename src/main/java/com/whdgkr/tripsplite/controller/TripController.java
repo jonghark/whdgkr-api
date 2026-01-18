@@ -6,6 +6,7 @@ import com.whdgkr.tripsplite.service.SettlementService;
 import com.whdgkr.tripsplite.service.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,11 @@ public class TripController {
     @GetMapping
     public List<TripResponse> getAllTrips() {
         return tripService.getAllTrips();
+    }
+
+    @GetMapping("/matched")
+    public List<TripResponse> getMatchedTrips(@AuthenticationPrincipal Long memberId) {
+        return tripService.getMatchedTrips(memberId);
     }
 
     @GetMapping("/{tripId}")

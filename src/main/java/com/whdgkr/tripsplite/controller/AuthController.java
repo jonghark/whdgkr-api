@@ -19,8 +19,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<MemberResponse> signup(@Valid @RequestBody SignupRequest request, HttpServletRequest httpRequest) {
-        log.info("### SIGNUP_HIT ### uri={} id={} email={}", httpRequest.getRequestURI(), request.getLoginId(), request.getEmail());
+        // [B-2] 회원가입 API 진입 로그
+        log.info("REGISTER_API_HIT uri={} loginId={} email={}", httpRequest.getRequestURI(), request.getLoginId(), request.getEmail());
         MemberResponse response = authService.signup(request);
+        log.info("REGISTER_API_SUCCESS memberId={}", response.getMemberId());
         return ResponseEntity.ok(response);
     }
 
@@ -28,9 +30,13 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
+        // [B-2] 로그인 API 진입 로그
+        log.info("LOGIN_API_HIT uri={} loginId={}", httpRequest.getRequestURI(), request.getLoginId());
         String userAgent = httpRequest.getHeader("User-Agent");
         String ipAddress = getClientIp(httpRequest);
-        return ResponseEntity.ok(authService.login(request, userAgent, ipAddress));
+        LoginResponse response = authService.login(request, userAgent, ipAddress);
+        log.info("LOGIN_API_SUCCESS memberId={}", response.getMember().getMemberId());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")

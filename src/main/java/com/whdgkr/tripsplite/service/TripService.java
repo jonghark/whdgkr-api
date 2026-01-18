@@ -43,6 +43,41 @@ public class TripService {
         return toDetailResponse(trip);
     }
 
+    @Transactional(readOnly = true)
+    public List<TripResponse> getMatchedTrips(Long memberId) {
+        // 1. 내 친구 목록의 friendId 조회
+        List<Friend> myFriends = friendRepository.findByOwnerMemberIdAndDeleteYn(memberId, "N");
+        if (myFriends.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 2. 친구들의 email과 friendId 수집
+        List<String> friendEmails = myFriends.stream()
+                .map(Friend::getEmail)
+                .filter(email -> email != null && !email.isEmpty())
+                .collect(Collectors.toList());
+
+        List<String> friendIds = myFriends.stream()
+                .map(Friend::getFriendId)
+                .filter(id -> id != null && !id.isEmpty())
+                .collect(Collectors.toList());
+
+        // 3. 모든 활성 여행 조회
+        List<Trip> allTrips = tripRepository.findByDeleteYn("N");
+
+        // 4. 각 여행의 참여자 중에서 친구 email 또는 friendId와 매칭되는 경우 필터링
+        return allTrips.stream()
+                .filter(trip -> {
+                    List<Participant> participants = participantRepository.findByTripIdAndDeleteYn(trip.getId(), "N");
+                    return participants.stream()
+                            .anyMatch(p ->
+                                (p.getEmail() != null && friendEmails.contains(p.getEmail()))
+                            );
+                })
+                .map(this::toSimpleResponse)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public TripResponse createTrip(TripRequest request) {
         // Validate: at least one participant required

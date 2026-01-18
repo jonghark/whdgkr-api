@@ -54,11 +54,34 @@ public class FriendService {
         Member ownerMember = memberRepository.findById(ownerMemberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found"));
 
+        // friendId 필수 검증
+        if (!StringUtils.hasText(request.getFriendId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "friendId is required");
+        }
+
+        // friendId 형식 검증 (영문 소문자, 숫자만)
+        if (!request.getFriendId().matches("^[a-z0-9]+$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "friendId must contain only lowercase letters and numbers");
+        }
+
+        // 본인 id와 동일하면 거부
+        if (request.getFriendId().equals(ownerMember.getLoginId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot add yourself as a friend");
+        }
+
+        // 중복 체크 (owner_member_id + friendId + deleteYn='N')
+        Optional<Friend> existing = friendRepository.findByOwnerMemberIdAndFriendIdAndDeleteYn(
+                ownerMemberId, request.getFriendId(), "N");
+        if (existing.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Friend with this friendId already exists");
+        }
+
         Friend friend = Friend.builder()
                 .ownerMember(ownerMember)
                 .name(request.getName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
+                .friendId(request.getFriendId())
                 .build();
 
         // loginId 또는 email로 회원 검색하여 매칭
@@ -86,6 +109,15 @@ public class FriendService {
         friend.setName(request.getName());
         friend.setEmail(request.getEmail());
         friend.setPhone(request.getPhone());
+
+        // friendId가 제공되면 업데이트 (필수는 아님, 생략 가능)
+        if (StringUtils.hasText(request.getFriendId())) {
+            // friendId 형식 검증
+            if (!request.getFriendId().matches("^[a-z0-9]+$")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "friendId must contain only lowercase letters and numbers");
+            }
+            friend.setFriendId(request.getFriendId());
+        }
 
         // 매칭 재시도
         if (!friend.isMatched()) {
@@ -121,6 +153,7 @@ public class FriendService {
                 .name(friend.getName())
                 .email(friend.getEmail())
                 .phone(friend.getPhone())
+                .friendId(friend.getFriendId())
                 .friendMemberId(friend.getFriendMember() != null ? friend.getFriendMember().getId() : null)
                 .matchedYn(friend.getMatchedYn())
                 .matchedAt(friend.getMatchedAt())

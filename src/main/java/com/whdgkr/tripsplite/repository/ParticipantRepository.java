@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
     List<Participant> findByTripId(Long tripId);
+    List<Participant> findByTripIdAndDeleteYn(Long tripId, String deleteYn);
 }

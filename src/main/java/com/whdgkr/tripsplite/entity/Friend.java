@@ -36,6 +36,9 @@ public class Friend {
     @Column(length = 20, unique = true)
     private String phone;
 
+    @Column(name = "friend_id", nullable = false, length = 50)
+    private String friendId;
+
     @Column(name = "matched_yn", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
     @Builder.Default
     private String matchedYn = "N";

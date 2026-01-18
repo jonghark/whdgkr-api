@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         boolean skip = PERMIT_ALL_PATHS.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, path));
         if (skip) {
-            log.debug("[JWT Filter] Skipping filter for path: {}", path);
+            log.info("[JWT] SKIP_FILTER path={}", path);
         }
         return skip;
     }
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Auth 엔드포인트는 절대 건드리지 않음 (이중 안전장치)
         if (path.startsWith("/api/auth/signup") || path.startsWith("/api/auth/login")
                 || path.startsWith("/api/auth/refresh") || path.startsWith("/api/dev/")) {
-            log.debug("[JWT Filter] Skipping auth check for: {}", path);
+            log.info("[JWT] DOUBLE_CHECK_SKIP path={}", path);
             filterChain.doFilter(request, response);
             return;
         }
