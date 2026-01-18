@@ -55,4 +55,8 @@ public class Member {
     public boolean isActive() {
         return "N".equals(deleteYn);
     }
+
+    public void updatePassword(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
+    }
 }

@@ -167,4 +167,22 @@ public class AuthService {
                 .email(member.getEmail())
                 .build();
     }
+
+    @Transactional
+    public void resetPassword(PasswordResetRequest request) {
+        log.info("[AUTH] resetPassword called: loginId={}, email={}", request.getLoginId(), request.getEmail());
+
+        Member member = memberRepository.findByLoginIdAndDeleteYn(request.getLoginId(), "N")
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "아이디 또는 이메일이 일치하지 않습니다"));
+
+        if (!member.getEmail().equals(request.getEmail())) {
+            log.warn("[AUTH] resetPassword failed: email mismatch for loginId={}", request.getLoginId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "아이디 또는 이메일이 일치하지 않습니다");
+        }
+
+        member.updatePassword(passwordEncoder.encode(request.getNewPassword()));
+        memberRepository.save(member);
+
+        log.info("[AUTH] resetPassword success: memberId={}", member.getId());
+    }
 }

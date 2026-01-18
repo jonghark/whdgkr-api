@@ -56,6 +56,14 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody PasswordResetRequest request) {
+        log.info("RESET_PASSWORD_API_HIT loginId={} email={}", request.getLoginId(), request.getEmail());
+        authService.resetPassword(request);
+        log.info("RESET_PASSWORD_API_SUCCESS loginId={}", request.getLoginId());
+        return ResponseEntity.ok().build();
+    }
+
     private String getClientIp(HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
