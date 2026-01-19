@@ -37,6 +37,10 @@ public class Participant {
     @JoinColumn(name = "friend_id")
     private Friend friend;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Member user;
+
     @Column(name = "is_owner", nullable = false)
     @Builder.Default
     private Boolean isOwner = false;

@@ -83,22 +83,9 @@ public class TripService {
 
     @Transactional
     public TripResponse createTrip(Long memberId, TripRequest request) {
-        // Validate: at least one participant required
-        if ((request.getParticipants() == null || request.getParticipants().isEmpty()) &&
-            (request.getFriendIds() == null || request.getFriendIds().isEmpty())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one participant is required");
-        }
-
-        // Validate: exactly one owner required
-        long ownerCount = 0;
-        if (request.getParticipants() != null) {
-            ownerCount = request.getParticipants().stream()
-                    .filter(p -> Boolean.TRUE.equals(p.getIsOwner()))
-                    .count();
-        }
-        if (ownerCount != 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Exactly one owner must be specified");
-        }
+        // Validate member exists
+        Member loginMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found: " + memberId));
 
         Trip trip = Trip.builder()
                 .title(request.getTripName())
@@ -108,6 +95,17 @@ public class TripService {
 
         Trip saved = tripRepository.save(trip);
         List<Participant> participants = new ArrayList<>();
+
+        // Auto-add logged-in user as owner
+        Participant owner = Participant.builder()
+                .trip(saved)
+                .user(loginMember)
+                .name(loginMember.getName())
+                .phone(null)
+                .email(loginMember.getEmail())
+                .isOwner(true)
+                .build();
+        participants.add(participantRepository.save(owner));
 
         // Create participants from friendIds if provided
         if (request.getFriendIds() != null && !request.getFriendIds().isEmpty()) {
@@ -122,7 +120,7 @@ public class TripService {
             }
         }
 
-        // Create participants from detailed participant info
+        // Create participants from detailed participant info (non-owner participants only)
         if (request.getParticipants() != null && !request.getParticipants().isEmpty()) {
             for (TripRequest.ParticipantInfo info : request.getParticipants()) {
                 Friend friend = null;
@@ -136,7 +134,7 @@ public class TripService {
                         .name(info.getName())
                         .phone(info.getPhone())
                         .email(info.getEmail())
-                        .isOwner(Boolean.TRUE.equals(info.getIsOwner()))
+                        .isOwner(false)
                         .build();
                 participants.add(participantRepository.save(participant));
 
@@ -196,8 +194,14 @@ public class TripService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found: " + tripId));
 
+        Member user = null;
+        if (request.getUserId() != null) {
+            user = memberRepository.findById(request.getUserId()).orElse(null);
+        }
+
         Participant participant = Participant.builder()
                 .trip(trip)
+                .user(user)
                 .name(request.getName())
                 .phone(request.getPhone())
                 .email(request.getEmail())
@@ -277,6 +281,7 @@ public class TripService {
     private ParticipantResponse toParticipantResponse(Participant p) {
         return ParticipantResponse.builder()
                 .id(p.getId())
+                .userId(p.getUser() != null ? p.getUser().getId() : null)
                 .name(p.getName())
                 .phone(p.getPhone())
                 .email(p.getEmail())
