@@ -13,6 +13,7 @@ public class ExpenseResponse {
     private String occurredAt;
     private Integer totalAmount;
     private String currency;
+    private String category;
     private String createdAt;
     private String settledYn;
     private String settledAt;

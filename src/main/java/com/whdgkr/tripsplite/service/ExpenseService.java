@@ -47,6 +47,7 @@ public class ExpenseService {
                 .occurredAt(LocalDateTime.parse(request.getOccurredAt(), dateTimeFormatter))
                 .totalAmount(request.getTotalAmount())
                 .currency(request.getCurrency() != null ? request.getCurrency() : "KRW")
+                .category(request.getCategory() != null ? ExpenseCategory.valueOf(request.getCategory()) : ExpenseCategory.OTHER)
                 .build();
 
         Expense savedExpense = expenseRepository.save(expense);
@@ -92,6 +93,7 @@ public class ExpenseService {
         expense.setOccurredAt(LocalDateTime.parse(request.getOccurredAt(), dateTimeFormatter));
         expense.setTotalAmount(request.getTotalAmount());
         expense.setCurrency(request.getCurrency() != null ? request.getCurrency() : "KRW");
+        expense.setCategory(request.getCategory() != null ? ExpenseCategory.valueOf(request.getCategory()) : ExpenseCategory.OTHER);
 
         // Soft delete existing payments and shares
         expense.getPayments().forEach(p -> p.setDeleteYn("Y"));
@@ -201,6 +203,7 @@ public class ExpenseService {
                 .occurredAt(expense.getOccurredAt().format(dateTimeFormatter))
                 .totalAmount(expense.getTotalAmount())
                 .currency(expense.getCurrency())
+                .category(expense.getCategory().name())
                 .createdAt(expense.getCreatedAt().format(dateTimeFormatter))
                 .settledYn(expense.getSettledYn())
                 .settledAt(expense.getSettledAt() != null ? expense.getSettledAt().format(dateTimeFormatter) : null)

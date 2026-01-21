@@ -10,6 +10,7 @@ public class ExpenseRequest {
     private String occurredAt; // ISO-8601: 2025-12-28T10:00:00
     private Integer totalAmount;
     private String currency = "KRW"; // 기본값: KRW
+    private String category = "OTHER"; // 기본값: OTHER
     private List<PaymentItem> payments;
     private List<ShareItem> shares;
     

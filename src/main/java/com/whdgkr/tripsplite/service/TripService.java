@@ -360,6 +360,7 @@ public class TripService {
                 .occurredAt(expense.getOccurredAt().format(dateTimeFormatter))
                 .totalAmount(expense.getTotalAmount())
                 .currency(expense.getCurrency())
+                .category(expense.getCategory().name())
                 .createdAt(expense.getCreatedAt().format(dateTimeFormatter))
                 .settledYn(expense.getSettledYn())
                 .settledAt(expense.getSettledAt() != null ? expense.getSettledAt().format(dateTimeFormatter) : null)

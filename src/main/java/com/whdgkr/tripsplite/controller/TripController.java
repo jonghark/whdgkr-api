@@ -3,6 +3,7 @@ package com.whdgkr.tripsplite.controller;
 import com.whdgkr.tripsplite.dto.*;
 import com.whdgkr.tripsplite.service.ExpenseService;
 import com.whdgkr.tripsplite.service.SettlementService;
+import com.whdgkr.tripsplite.service.StatisticsService;
 import com.whdgkr.tripsplite.service.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class TripController {
     private final TripService tripService;
     private final ExpenseService expenseService;
     private final SettlementService settlementService;
+    private final StatisticsService statisticsService;
 
     @GetMapping
     public List<TripResponse> getAllTrips() {
@@ -74,6 +76,12 @@ public class TripController {
             @PathVariable Long tripId,
             @RequestParam(defaultValue = "UNSETTLED") String scope) {
         return settlementService.calculateSettlement(tripId, scope);
+    }
+
+    // Statistics endpoint
+    @GetMapping("/{tripId}/statistics")
+    public StatisticsResponse getStatistics(@PathVariable Long tripId) {
+        return statisticsService.getTripStatistics(tripId);
     }
 
     // Expense endpoints

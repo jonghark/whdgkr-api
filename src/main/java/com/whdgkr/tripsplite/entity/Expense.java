@@ -39,6 +39,11 @@ public class Expense {
     @Builder.Default
     private String currency = "KRW";
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    @Builder.Default
+    private ExpenseCategory category = ExpenseCategory.OTHER;
+
     @Column(name = "delete_yn", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
     @Builder.Default
     private String deleteYn = "N";
