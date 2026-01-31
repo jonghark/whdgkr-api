@@ -40,7 +40,7 @@ public class Expense {
     private String currency = "KRW";
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'OTHER'")
     @Builder.Default
     private ExpenseCategory category = ExpenseCategory.OTHER;
 
